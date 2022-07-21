@@ -1,6 +1,5 @@
 package com.example.demo.order.command.application;
 
-import com.example.demo.common.VersionConflictException;
 import com.example.demo.order.NoOrderException;
 import com.example.demo.order.command.domain.Order;
 import com.example.demo.order.command.domain.OrderNo;
@@ -11,23 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class StartShippingService {
+public class ChangeShippingService {
     private OrderRepository orderRepository;
 
-    public StartShippingService(OrderRepository orderRepository) {
+    public ChangeShippingService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     @Transactional
-    public void startShipping(StartShippingRequest req){
-        Optional<Order> orderOpt = orderRepository.findById(new OrderNo(req.getOrderNumber()));
+    public void changeShipping(ChangeShippingRequest changeReq){
+        Optional<Order> orderOpt = orderRepository.findById(new OrderNo(changeReq.getNumber()));
         Order order = orderOpt.orElseThrow(NoOrderException::new);
-
-        if(order.matchVersion(req.getVersion())) {
-            throw new VersionConflictException();
-        }
-
-        order.startShipping();
+        order.changeShippingInfo(changeReq.getShippingInfo());
     }
 }
-
