@@ -27,7 +27,7 @@ public class JdbcEventStore implements EventStore {
         EventEntry entry = new EventEntry(event.getClass().getName(),
                 MediaType.APPLICATION_JSON_VALUE, toJson(event));
         jdbcTemplate.update(
-                "insert into evententry " +
+                "insert into event_entry " +
                 "(type, content_type, payload, timestamp) " +
                 "values (?, ?, ?, ?)",
                 ps -> {
@@ -49,7 +49,7 @@ public class JdbcEventStore implements EventStore {
     @Override
     public List<EventEntry> get(long offset, long limit){
         return jdbcTemplate.query(
-                "select * from evententry order by id asc limit ?, ?",
+                "select * from event_entry order by id asc limit ?, ?",
                 ps -> {
                     ps.setLong(1, offset);
                     ps.setLong(2, limit);
